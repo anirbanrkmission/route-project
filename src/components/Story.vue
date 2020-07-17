@@ -4,7 +4,7 @@
     <v-card
       class="ma-5 pa-5"
       elevation="3"
-      v-for="feed in reversedFeeds"
+      v-for="feed in sortedFeeds"
       :key="feed.post.time"
       tile
     >
@@ -29,9 +29,12 @@ export default {
     };
   },
   computed: {
-    reversedFeeds() {
-      return (this.feeds != [])? this.feeds.slice().reverse() : [];
-    }
+    sortedFeeds() {
+      return (this.feeds.length>0)? 
+        this.feeds.slice().sort((a, b) => {
+            return a.post.time - b.post.time
+        }) : []
+    },
   },
   methods: {
     getModifiedTime(time) {
