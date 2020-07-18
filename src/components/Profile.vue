@@ -125,11 +125,11 @@ export default {
   methods: {
   },
   mounted() {
-    console.log('In  profile store id: ',store.state.id)
+    // console.log('In  profile store id: ',store.state.id)
     axios.get('http://localhost:8000/getUser/'+store.state.id).then(
       (response) => {
         this.user = response.data[0]
-        console.log('In Profile user: ',this.user)
+        // console.log('In Profile user: ',this.user)
       })
   }
 }

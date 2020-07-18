@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <h2>{{userData.name}}'s Story</h2>
+    <h2>{{userData.name}}'s Story
+      <v-btn class="mx-50" color="primary" @click="getPosts"><v-icon>mdi-refresh</v-icon></v-btn>
+    </h2>
     <v-card
       class="ma-5 pa-5"
       elevation="3"
@@ -32,7 +34,7 @@ export default {
     sortedFeeds() {
       return (this.feeds.length>0)? 
         this.feeds.slice().sort((a, b) => {
-            return a.post.time - b.post.time
+            return b.post.time - a.post.time
         }) : []
     },
   },
@@ -56,7 +58,7 @@ export default {
 
           posts = posts.flat()
           this.feeds=posts
-          console.log('Stories', this.feeds);
+          // console.log('Stories', this.feeds);
         });
     }
   },

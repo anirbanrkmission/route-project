@@ -57,7 +57,7 @@ export default {
       axios.get('http://localhost:8000/getAllPeople').then(
         (response) => {
           this.people = response.data
-          console.log('People you may know: ', this.people)
+          // console.log('People you may know: ', this.people)
         })
     },
     addToFriendList(friendObj) {
@@ -68,7 +68,7 @@ export default {
           friend:  friendObj
         }
       })
-      console.log('Added: ', friendObj)
+      // console.log('Added: ', friendObj)
       
       this.userData.friends.push({friend: friendObj})
     },

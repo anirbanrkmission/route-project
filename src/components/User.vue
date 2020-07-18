@@ -62,14 +62,14 @@ export default {
   },
   methods: {
     loggedOut() {
-      console.log('In User Id: ', store.state.loggedIn)
+      // console.log('In User Id: ', store.state.loggedIn)
       store.commit('change', false)
       store.commit('setId', '')
-      console.log('After Commit: ', store.state.loggedIn)
+      // console.log('After Commit: ', store.state.loggedIn)
     }
   },
   mounted() {
-    console.log('Store:', store.state.id)
+    // console.log('Store:', store.state.id)
   }
 }
 </script>

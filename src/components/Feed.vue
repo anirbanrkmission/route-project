@@ -7,7 +7,7 @@
     </v-card>
 
     <v-divider></v-divider>
-    <h2>Here you will see your post Feeds</h2>
+    <h2>Here you will see your posts</h2>
     <v-card
       class="ma-5 pa-5"
       elevation="3"
@@ -15,7 +15,7 @@
       :key="feed.post.time"
       tile
     >
-      <v-card-title>{{feed.post.by}}'s Post</v-card-title>
+      <v-card-title>{{userData.name}}'s Post</v-card-title>
       <v-card-subtitle>Posted on: {{getData(feed.post.time)}}</v-card-subtitle>
       <v-card-text>{{feed.post.text}}</v-card-text>
     </v-card>
@@ -43,7 +43,7 @@ export default {
   methods: {
     postFeed(postText) {
       const postTime = Date.now();
-      console.log("Time: ", postTime);
+      // console.log("Time: ", postTime);
       var postData = {
         text: postText,
         by: store.state.id,
