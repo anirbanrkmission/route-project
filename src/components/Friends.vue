@@ -1,15 +1,16 @@
 <template>
   <v-container>
-    <h2>{{userData.name}}'s friends</h2><br />
+    <h2>{{userData.name}}'s friends</h2>
+    <br />
 
     <v-card
       class="d-inline-block mx-auto"
       elevation="5"
-      v-for="obj in userData.friends"
-      :key="obj.friend.username"
+      v-for="obj in friendList"
+      :key="obj.username"
     >
-      <v-card-title>{{obj.friend.name}}</v-card-title>
-      <v-card-subtitle>{{obj.friend.username}}</v-card-subtitle>
+      <v-card-title>{{obj.name}}</v-card-title>
+      <v-card-subtitle>{{obj.username}}</v-card-subtitle>
     </v-card>
     <br />
     <br />
@@ -33,41 +34,40 @@
         <v-btn color="primary" @click="sendFriendRequest(person)">Add Friend</v-btn>
       </v-card-actions>
     </v-card>
-    
-    <br /><br />
+
+    <br />
+    <br />
     <h2>{{userData.name}}'s Received Friend Requests</h2>
     <v-card
       class="mx-auto"
       elevation="6"
-      v-for="requestObj in requestList"
+      v-for="requestObj in filteredRequestList"
       :key="requestObj.request.requestBy.username"
     >
       <v-card-title>{{requestObj.request.requestBy.name}}</v-card-title>
+
       <v-card-subtitle
         v-if="requestObj.request.requestTo.accepted"
       >@{{requestObj.request.requestBy.username}} is your friend now</v-card-subtitle>
+
       <v-card-subtitle v-else>wants friendship wtih you</v-card-subtitle>
-      <v-card-action v-if="!requestObj.request.requestTo.accepted">
-        <v-btn color="primary" @click="acceptRequest(requestObj.request.requestBy.username)">Accept</v-btn>
-        <v-btn
-          color="primary"
-          class="mx-5"
-          outlined
-          @click="removeRequest(requestObj.request.requestBy.username)"
-        >Remove</v-btn>
-      </v-card-action>
+
+      <v-card-actions v-if="!requestObj.request.requestTo.accepted">
+        <v-btn color="primary" @click="acceptRequest(requestObj)">Accept</v-btn>
+        <v-btn color="primary" class="mx-5" outlined @click="removeRequest(requestObj)">Remove</v-btn>
+      </v-card-actions>
     </v-card>
 
-    <br/>
+    <br />
     <h2>{{userData.name}}'s Sent Friend Requests</h2>
     <v-card
       class="d-inline-block mx-auto"
       elevation="5"
-      v-for="sentObj in requestedPeopleList"
-      :key="sentObj.sent.username"
+      v-for="reqObj in requestedPeopleList"
+      :key="reqObj.request.requestTo.username"
     >
-      <v-card-title>{{sentObj.sent.name}}</v-card-title>
-      <v-card-subtitle>@{{sentObj.sent.username}}</v-card-subtitle>
+      <v-card-title>{{reqObj.request.requestTo.name}}</v-card-title>
+      <v-card-subtitle>@{{reqObj.request.requestTo.username}}</v-card-subtitle>
       <!--v-card-action v-if="!sentObj.sent.accepted">
         <v-btn color="primary">Accept</v-btn>
         <v-btn color="primary" class="mx-5" outlined>Remove</v-btn>
@@ -90,12 +90,12 @@ export default {
         {
           request: {
             requestTo: {
-              username: "anirbanrkmission",
+              username: "anirbanrkmission@gmail.com",
               name: "Anirban",
               accepted: false
             },
             requestBy: {
-              username: "anupbal3763",
+              username: "anupbal3763@gmail.com",
               name: "Anup Bal"
             }
           }
@@ -103,30 +103,14 @@ export default {
         {
           request: {
             requestTo: {
-              username: "anirbanrkmission",
+              username: "anirbanrkmission@gmail.com",
               name: "Anirban",
               accepted: true
             },
             requestBy: {
-              username: "munmun",
+              username: "munmun@gmail.com",
               name: "Munmun Bal"
             }
-          }
-        }
-      ],
-      requestedPeopleList: [
-        {
-          sent: {
-            username: "harsh",
-            name: "Harsh",
-            accepted: false
-          }
-        },
-        {
-          sent: {
-            username: "jully",
-            name: "Jully",
-            accepted: true
           }
         }
       ]
@@ -137,67 +121,60 @@ export default {
       return this.people.filter(personObj => {
         return (
           personObj.username != store.state.id &&
-          this.existanceInFriendList(personObj.username) &&
-          this.existanceInRequestedPeopleList(personObj.username) &&
-          this.existanceInRequestList(personObj.username)
+          !this.existanceInRequestList(personObj.username)
         );
       });
+    },
+    requestedPeopleList() {
+      return this.requestList.filter(requestObj => {
+        return (requestObj.request.requestBy.username == store.state.id &&
+        !requestObj.request.requestTo.accepted);
+      });
+    },
+    filteredRequestList() {
+      return this.requestList.filter(requestObj => {
+        return (requestObj.request.requestTo.username == store.state.id &&
+          !requestObj.request.requestTo.accepted);
+        });
+    },
+    friendList() {
+      var reqList = this.requestList.filter(reqObj => {
+        return reqObj.request.requestTo.accepted;
+      });
+
+      var friends = []
+
+      for (let reqObj of reqList) {
+        if (reqObj.request.requestBy.username == store.state.id) {
+          friends.push(reqObj.request.requestTo);
+        } else {
+          friends.push(reqObj.request.requestBy);
+        }
+      }
+
+      console.log('Friends', friends)
+      return friends;
     }
   },
   methods: {
+
     getPeopleYouMayKnow() {
       axios.get("http://localhost:8000/getAllPeople").then(response => {
         this.people = response.data;
         console.log("People you may know: ", this.people);
       });
     },
-    addToFriendList(friendObj) {
-      axios({
-        method: "patch",
-        url: "http://localhost:8000/addFriend/" + store.state.id,
-        data: {
-          friend: friendObj
-        }
-      });
-      console.log("Added: ", friendObj);
-
-      this.userData.friends.push({ friend: friendObj });
-    },
-    existanceInFriendList(personUsername) {
-      if (!this.userData.friends) {
-        return true;
-      }
-      for (let obj of this.userData.friends) {
-        if (obj.friend.username == personUsername) {
-          return false;
-        }
-      }
-
-      return true;
-    },
-    existanceInRequestedPeopleList(personUsername) {
-      if (!this.userData.requestedPeopleList) {
-        return true;
-      }
-      for (let sentObj of this.userData.requestedPeopleList) {
-        if (sentObj.sent.username == personUsername) {
-          return false;
-        }
-      }
-
-      return true;
-    },
     existanceInRequestList(personUsername) {
-      if (!this.userData.requestList) {
-        return true;
-      }
-      for (let requestObj of this.userData.requestList) {
-        if (requestObj.request.requestTo.username == personUsername) {
-          return false;
+      for (let reqObj of this.requestList) {
+        if (reqObj.request.requestBy.username == personUsername) {
+          return true
+        }
+        else if(reqObj.request.requestTo.username == personUsername) {
+          return true
         }
       }
 
-      return true;
+      return false
     },
     sendFriendRequest(personObj) {
       let requestObj = {
@@ -211,10 +188,10 @@ export default {
           name: this.userData.name
         }
       };
-      let sentObj = {
-        sent: requestObj.requestTo
-      }
-      this.userData.requestedPeopleList.push(sentObj);
+      
+      this.requestList.push({
+        request: requestObj
+      });
       axios({
         method: "PATCH",
         url: "http://localhost:8000/sendRequest/",
@@ -224,11 +201,36 @@ export default {
       });
       console.log("Request sent to: ", personObj);
     },
-    acceptRequest(requestUsername) {
+    acceptRequest(requestObj) {
+      for (var index in this.requestList) {
+        if (requestObj.request.requestBy.username == this.requestList[index].request.requestBy.username) {
+          this.requestList[index].request.requestTo.accepted = true;
+          break
+        }
+      }
+
+      axios({
+        method: "PATCH",
+        url:
+          "http://localhost:8000/acceptRequest/" +
+          requestObj.request.requestBy.username
+      });
     },
-    removeRequest(requestUsername) {
-      
-    },
+    removeRequest(requestObj) {
+      for (var index in this.requestList) {
+        if (requestObj.request.requestBy.username == this.requestList[index].request.requestBy.username) {
+          this.requestList.splice(index, 1)
+          break
+        }
+      }
+
+      axios({
+        method: "PATCH",
+        url:
+          "http://localhost:8000/removeRequest/" +
+          requestObj.request.requestBy.username
+      });
+    }
   },
   mounted() {
     this.getPeopleYouMayKnow();
