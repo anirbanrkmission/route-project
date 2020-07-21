@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2>{{userData.name}}'s friends</h2>
+    <h2>{{userData.name}}'s friends <v-btn color="primary" outlined @click="getrequest()"><v-icon>mdi-refresh</v-icon></v-btn></h2>
     <br />
 
     <v-card
@@ -86,34 +86,7 @@ export default {
   data() {
     return {
       people: [],
-      requestList: [
-        {
-          request: {
-            requestTo: {
-              username: "anirbanrkmission@gmail.com",
-              name: "Anirban",
-              accepted: false
-            },
-            requestBy: {
-              username: "anupbal3763@gmail.com",
-              name: "Anup Bal"
-            }
-          }
-        },
-        {
-          request: {
-            requestTo: {
-              username: "anirbanrkmission@gmail.com",
-              name: "Anirban",
-              accepted: true
-            },
-            requestBy: {
-              username: "munmun@gmail.com",
-              name: "Munmun Bal"
-            }
-          }
-        }
-      ]
+      requestList: this.userData.requests,
     };
   },
   computed: {
@@ -157,7 +130,12 @@ export default {
     }
   },
   methods: {
-
+    getRequest() {
+      axios.get('http://localhost:8000/getReq'+store.state.id)
+      .then(reqsList => {
+        this.requestList = reqsList
+      })
+    },
     getPeopleYouMayKnow() {
       axios.get("http://localhost:8000/getAllPeople").then(response => {
         this.people = response.data;
@@ -212,8 +190,8 @@ export default {
       axios({
         method: "PATCH",
         url:
-          "http://localhost:8000/acceptRequest/" +
-          requestObj.request.requestBy.username
+          "http://localhost:8000/acceptRequest/",
+        data: requestObj
       });
     },
     removeRequest(requestObj) {
@@ -224,11 +202,13 @@ export default {
         }
       }
 
+      console.log('Removed: ', requestObj)
+
       axios({
         method: "PATCH",
         url:
-          "http://localhost:8000/removeRequest/" +
-          requestObj.request.requestBy.username
+          "http://localhost:8000/removeRequest/",
+        data: requestObj
       });
     }
   },
