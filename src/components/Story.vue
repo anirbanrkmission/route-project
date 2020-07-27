@@ -34,7 +34,7 @@ export default {
     sortedFeeds() {
       return (this.feeds.length>0)? 
         this.feeds.slice().sort((a, b) => {
-            return b.post.time - a.post.time
+          return b.post.time - a.post.time
         }) : []
     },
   },
@@ -51,14 +51,13 @@ export default {
           var posts = []
 
           for (var ix in this.feeds) {
-              for (let post of this.feeds[ix].posts) {
-                  posts.push(post)
-              }
+            for (let post of this.feeds[ix].posts) {
+              posts.push(post)
+            }
           }
 
-          posts = posts.flat()
-          this.feeds=posts
-          // console.log('Stories', this.feeds);
+          this.feeds = posts.flat()
+          console.log('Stories', this.feeds);
         });
     }
   },
