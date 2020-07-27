@@ -10,11 +10,11 @@ const routes = [{
     name: 'home',
     component: Home,
     beforeEnter: (to, from, next) => {
-      console.log('At Home from.params: ', from.params)
-      console.log('At Home to.params: ', to.params)
+      // console.log('At Home from.params: ', from.params)
+      // console.log('At Home to.params: ', to.params)
       store.commit('change', false)
       store.commit('setId', '')
-      console.log('Id, loggedIn: ', store.state.id, store.state.loggedIn)
+      // console.log('Id, loggedIn: ', store.state.id, store.state.loggedIn)
       next()
     }
   },
@@ -23,14 +23,14 @@ const routes = [{
     name: 'user',
     component: User,
     beforeEnter: (to, from, next) => {
-      console.log('Username at routes: ', to.params.id)
+      // console.log('Username at routes: ', to.params.id)
       axios.get('http://localhost:8000/checkLoginStatus/' + to.params.id).then(
         (response) => {
-          console.log('Response data: ', response.data)
+          // console.log('Response data: ', response.data)
           if (!response.data) {
             next(false)
           } else {
-            console.log('In beforeEnter to: ', to.params)
+            // console.log('In beforeEnter to: ', to.params)
             store.commit('change', true)
             store.commit('setId', to.params.id)
             next()

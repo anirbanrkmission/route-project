@@ -14,9 +14,9 @@ const router = new VueRouter({
 
 router.beforeEach(
   (to, from, next) => {
-    console.log('In before Each from: ', from.params)
-    console.log('In beforeEach to: ', to.params)
-    console.log('In beforeEach Store loggedIn: ', store.state.loggedIn)
+    // console.log('In before Each from: ', from.params)
+    // console.log('In beforeEach to: ', to.params)
+    // console.log('In beforeEach Store loggedIn: ', store.state.loggedIn)
     if (store.state.loggedIn) {
       //store.commit('change', true)
       //store.commit('setId', to.params.id)
@@ -39,7 +39,7 @@ router.beforeEach(
           } else {
             store.commit('change', true)
             store.commit('setId', to.params.id)
-            console.log('Go to Profile Id: ', store.state.id)
+            // console.log('Go to Profile Id: ', store.state.id)
             next()
           }
         })

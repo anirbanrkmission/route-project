@@ -5,7 +5,7 @@
       <v-col>
         <v-card>
           <v-card-title>{{user.name}} </v-card-title>
-          <v-card-subtitle>User Id: {{user.username}}</v-card-subtitle>
+          <v-card-subtitle>{{user.username}}</v-card-subtitle>
           <v-card-text>
             <v-tabs v-model="tab" centered>
               <v-tabs-slider></v-tabs-slider>
@@ -30,6 +30,7 @@ import navigation from "./Navigation";
 import Feed from "./Feed";
 import Friends from "./Friends";
 import Edit from "./Edit";
+import Story from './Story';
 
 import axios from 'axios'
 import store from '../store'
@@ -47,7 +48,7 @@ export default {
       tab: null,
       tabs: [
         {
-          name: 'Your Feeds',
+          name: 'Your Posts',
           href: '#feed',
           icon: 'mdi-newspaper'
         },
@@ -60,6 +61,11 @@ export default {
           name: 'Edit Profile',
           href: '#edit',
           icon: 'mdi-pencil'
+        },
+        {
+          name: 'Story',
+          href: '#story',
+          icon: 'mdi-panda'
         }
       ],
       tabsItem: [
@@ -74,6 +80,10 @@ export default {
         {
           value: 'edit',
           comp: Edit
+        },
+        {
+          value: 'story',
+          comp: Story
         }
       ],
       navigation_items: [
@@ -115,11 +125,11 @@ export default {
   methods: {
   },
   mounted() {
-    console.log('In  profile store id: ',store.state.id)
+    // console.log('In  profile store id: ',store.state.id)
     axios.get('http://localhost:8000/getUser/'+store.state.id).then(
       (response) => {
         this.user = response.data[0]
-        console.log('In Profile user: ',this.user)
+        // console.log('In Profile user: ',this.user)
       })
   }
 }

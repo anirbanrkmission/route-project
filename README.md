@@ -1,4 +1,6 @@
 # route-project
+This branch is about the development of feed.
+Story section is added in the Profile.
 
 ## Project setup
 ```
