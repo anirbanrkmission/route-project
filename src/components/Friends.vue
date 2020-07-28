@@ -167,9 +167,6 @@ export default {
         }
       };
       
-      this.requestList.push({
-        request: requestObj
-      });
       axios({
         method: "PATCH",
         url: "http://localhost:8000/sendRequest/",
@@ -177,9 +174,10 @@ export default {
           request: requestObj
         }
       })
-      // console.log('Added: ', friendObj)
-      
-      this.userData.friends.push({friend: friendObj})
+
+      this.requestList.push({
+        request: requestObj
+      });
     },
     acceptRequest(requestObj) {
       for (var index in this.requestList) {
